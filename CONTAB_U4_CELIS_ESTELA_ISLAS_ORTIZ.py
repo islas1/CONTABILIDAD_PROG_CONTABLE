@@ -132,7 +132,7 @@ def limite2(a):
 
 def limite3(a):
     if len(a.get()) > 0:
-        a.set(a.get()[:8])
+        a.set(a.get()[:5])
 
 def limite4(a):
     if len(a.get()) > 0:
@@ -148,7 +148,7 @@ def verificar_user(event):
 def verificar_contra(event):
     letra = contra_sign.get()
     for i in letra:
-        if i not in 'qwertyuiopasdfghjklzxcvbnmñQWERTYUIOPASDFGHJKLZXCVBNM_1234567890':
+        if i not in 'qwertyuiopasdfghjklzxcvbnmñQWERTYUIOPASDFGHJKLZXCVBNM_1234567890@':
             contra_sign.delete(letra.index(i), letra.index(i)+1)
 
 def verificar_corr(event):
@@ -166,7 +166,7 @@ def verificar_user2(event):
 def verificar_contra2(event):
     letra = contra_log.get()
     for i in letra:
-        if i not in 'qwertyuiopasdfghjklzxcvbnmñQWERTYUIOPASDFGHJKLZXCVBNM_1234567890':
+        if i not in 'qwertyuiopasdfghjklzxcvbnmñQWERTYUIOPASDFGHJKLZXCVBNM_1234567890@':
             contra_log.delete(letra.index(i), letra.index(i)+1)
 
 def verificar_corr2(event):
@@ -175,23 +175,19 @@ def verificar_corr2(event):
         if i not in 'qwertyuiopasdfghjklzxcvbnmñQWERTYUIOPASDFGHJKLZXCVBNM_1234567890':
             corr_log.delete(letra.index(i), letra.index(i)+1)
 
-def verificar_codigo(event):
-    letra = cod.get()
-    for i in letra:
-        if i not in '1234567890':
-            cod.delete(letra.index(i), letra.index(i)+1)
+def validate_entry(a, b):
 
-def verificar_codigo2(event):
-    letra = cod2.get()
-    for i in letra:
-        if i not in '1234567890':
-            cod2.delete(letra.index(i), letra.index(i)+1)
+    if len(b) > 5:
+        return False
+    
+    return a.isdecimal()
 
-def verificar_codigo3(event):
-    letra = cod3.get()
-    for i in letra:
-        if i not in '1234567890':
-            cod3.delete(letra.index(i), letra.index(i)+1)
+def validate_entry2(a, b):
+
+    if len(b) > 7:
+        return False
+    
+    return a.isdecimal()
 
 #********---------------FUNCIONES DE LA BASE DE DATOS PARA LOGEAR AL USUARIO------------*************
 
@@ -229,6 +225,7 @@ def sign_user():
     conexion.close()
 
 def log_user():
+
     conexion = sqlite3.connect("inisesion.db")
     fcursor = conexion.cursor()
     corr_log3=(corr_log.get()+corr_log2.get())
@@ -243,6 +240,49 @@ def log_user():
                             message="Los datos ingresados no son correctos, vuelva a intentar")
 
     conexion.close()
+
+#****************-------------------FUNCIONES BD PARA LA BASE DE DATOS----------------***************************
+
+def validacion_entradas():
+    if cuenta_cod.get()=="":
+        messagebox.showinfo(title="AVISO", message="El campo esta vacio ingresa un valor")
+    else:
+        cod_eleccion()
+
+def cod_eleccion():
+    if cuenta_cod.get()=="10000":
+        asiento_entry.config(values=["CAJA", "BANCOS", "CLIENTES", "ALMACENES", "PAPELERIA Y UTILES", "MOBILIARIO Y EQUIPO", "EQUIPO DE COMPUTO", "MARCAS REGISTRADAS"])
+    elif cuenta_cod.get()=="11000":
+        asiento_entry.config(values=["CAJA", "BANCOS", "CLIENTES", "ALMACENES", "PAPELERIA Y UTILES"])
+    elif cuenta_cod.get()=="12000":
+        asiento_entry.config(values=["MOBILIARIO Y EQUIPO", "EQUIPO DE COMPUTO", "MARCAS REGISTRADAS"])
+    elif cuenta_cod.get()=="12010":
+        asiento_entry.config(values=["MOBILIARIO Y EQUIPO", "EQUIPO DE COMPUTO"])
+    elif cuenta_cod.get()=="12020":
+        asiento_entry.config(values=["MARCAS REGISTRADAS"])
+    elif cuenta_cod.get()=="20000":
+        asiento_entry.config(values=["PROVEEDORES", "ACREEDORES DIVERSOS", "ACREEDORES BANCARIOS", "ACREEDORES HIPOTECARIOS"])
+    elif cuenta_cod.get()=="21000":
+        asiento_entry.config(values=["PROVEEDORES", "ACREEDORES DIVERSOS"])
+    elif cuenta_cod.get()=="22000":
+        asiento_entry.config(values=["ACREEDORES BANCARIOS", "ACREEDORES HIPOTECARIOS"])
+    elif cuenta_cod.get()=="30000":
+        asiento_entry.config(values=["CAPITAL SOCIAL", "UTILIDAD DEL EJERCICIO"])
+    elif cuenta_cod.get()=="31000":
+        asiento_entry.config(values=["CAPITAL SOCIAL"])
+    elif cuenta_cod.get()=="32000":
+        asiento_entry.config(values=["UTILIDAD DEL EJERCICIO"])
+    elif cuenta_cod.get()=="40000":
+        asiento_entry.config(values=["VENTAS", "COSTO DE VENTAS", "GASTO DE VENTAS", "GASTOS DE ADMINISTRACION"])
+    elif cuenta_cod.get()=="50000":
+        asiento_entry.config(values=["COSTO DE VENTAS", "GASTO DE VENTAS", "GASTOS DE ADMINISTRACION"])
+
+#funcion para las ventanas xd
+def cierre():
+    ventanaaaa.destroy()
+    boton1.config(state="normal")
+
+    
 
 #****************------------------VENTANAS DE INICIO DE SESION--------------*****************
 
@@ -342,6 +382,8 @@ def ven_login():
     boton_reg.place(width=150, height=25, x=135, y=390)
 
     ven1.config(menu=menubar)
+    global boton1
+    boton1 = boton_acept
     global jaja
     jaja = ven1
     ven1.mainloop()
@@ -430,6 +472,7 @@ def ven_asientos():
     ven3.geometry("1280x720")
     ven3.resizable(width=False, height=False)
     ven3.config(bg="azure")
+    boton1.config(state="disable")
     w = int(850)
     h = int(450)
     centrar(ven3, w, h)
@@ -455,50 +498,54 @@ def ven_asientos():
     lista_pedidos.column("#3",  width=100)
     lista_pedidos.column("#4",  width=100)
 
-    cuenta_valid = StringVar()
-    cuenta_valid2 = StringVar()
 
-    asiento_entry=ttk.Combobox(ven3, font=("calibri light", 9), state="readonly", values=[
-        "Agregar las cuentas"])
+    global cuenta_cod
+    global asiento_entry
+    global aboncar_box
+    global importe
+    def cierre():
+        ven3.destroy()
+        boton1.config(state="normal")
+
+    cuenta_valid = StringVar()
+    import_valid = StringVar()
+
+    cuenta_cod=Entry(ven3, validate="key", validatecommand=(ven3.register(validate_entry), "%S", "%P"), background="ghostwhite", justify="left", textvariable=cuenta_valid, foreground="black", font=("calibri light", 12))   #8
+    cuenta_cod.place(x=10, y=30,width=130, height=30)
+
+    asiento_entry=ttk.Combobox(ven3, font=("calibri light", 9), state="readonly", values=[])
     asiento_entry.place(x=10, y=90,width=220)
 
-    combo_2=ttk.Combobox(ven3, font=("calibri light", 9), state="readonly", values=[
-        "Agregar las cuentas"])
-    combo_2.place(x=10, y=145,width=220)
+    aboncar_box=ttk.Combobox(ven3, font=("calibri light", 9), state="readonly", values=[
+        "CARGOS", "ABONOS"])
+    aboncar_box.place(x=10, y=145,width=220)
 
-    num_valid = StringVar()
-    cuenta_cod=Entry(ven3, background="ghostwhite", justify="left", textvariable=cuenta_valid, foreground="black", font=("calibri light", 12))   #8
-    cuenta_cod.place(x=10, y=30,width=130, height=30)
-    cuenta_cod.bind('<KeyRelease>', verificar_codigo)
-    cuenta_valid.trace("w", lambda *args: limite3(cuenta_valid))
-    boton_acept=ttk.Button(ven3, text="Boton",cursor="hand2")  # command pendiente
+    importe=Entry(ven3, validate="key", validatecommand=(ven3.register(validate_entry2), "%S", "%P"), background="ghostwhite", justify="left", textvariable=import_valid, foreground="black", font=("calibri light", 12))   # 12
+    importe.place(x=10, y=200,width=220, height=30)
+
+    no_asiento=Entry(ven3, state="readonly", background="ghostwhite", justify="left", foreground="black", font=("calibri light", 12))   #numeros del siguiente asiento
+    no_asiento.place(x=10, y=360, width=30, height=30)
+
+    boton_acept=ttk.Button(ven3, text="Agregar",cursor="hand2", command=validacion_entradas)  # command pendiente
     boton_acept.place(x=150, y=30,height=30)
-    cuenta_cod2=Entry(ven3, background="ghostwhite", justify="left", textvariable=cuenta_valid2, foreground="black", font=("calibri light", 12))   # 12
-    cuenta_cod2.place(x=10, y=200,width=220, height=30)
-    cuenta_cod2.bind('<KeyRelease>', verificar_codigo2)
-    cuenta_valid2.trace("w", lambda *args: limite4(cuenta_valid2))
-    boton_reg=ttk.Button(ven3, text="Regresar", cursor="hand2", command=ven3.destroy)  # command pendiente
+
+    boton_reg=ttk.Button(ven3, text="Regresar", cursor="hand2", command=cierre)  # command pendiente
     boton_reg.place(x=10, y=400, width=220)
+
     boton_añadir=ttk.Button(ven3, text="Añadir", cursor="hand2")  # command pendiente
     boton_añadir.place(x=67, y=260,height=30,width=120)
+
     boton_sig_as=ttk.Button(ven3, text="Siguiente asiento", cursor="hand2")  # command pendiente
     boton_sig_as.place(x=67, y=300, height=30,width=120)
-    No_asiento=Entry(ven3, background="ghostwhite", justify="left", textvariable=num_valid, foreground="black", font=("calibri light", 12))   #numeros del siguiente asiento
-    No_asiento.place(x=10, y=360, width=30, height=30)
-    No_asiento.bind('<KeyRelease>', verificar_codigo3)
-    num_valid.trace("w", lambda *args: limite2(num_valid))
+
     mi_label3 = Label(ven3,
                         text="No. de asiento",
                         bg="azure") 
     mi_label3.place(x=50, y=360,width=80,height=30)
+    ven3.protocol("WM_DELETE_WINDOW", cierre)
 
-    global cod
-    cod = cuenta_cod
-    global cod2 
-    cod2 = cuenta_cod2
-    global cod3 
-    cod3 = No_asiento
-    
+    global ventanaaaa
+    ventanaaaa = ven3
     ven3.mainloop()
 
 

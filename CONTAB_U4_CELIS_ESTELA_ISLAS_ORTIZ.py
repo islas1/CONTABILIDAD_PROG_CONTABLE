@@ -47,7 +47,7 @@ def create_tables():
 
 create_tables()
 
-# **************--------FUNCIONES PARA EL DISENO DEL PROGRAMA-------***********
+# **************--------FUNCIONES PARA EL DISEÑO DEL PROGRAMA-------***********
 
 def centrar(a, wt, ht):
     wtotal = a.winfo_screenwidth()
@@ -60,7 +60,7 @@ def centrar(a, wt, ht):
     a.geometry(str(wventana)+"x"+str(hventana) +
                "+"+str(pwidth)+"+"+str(pheight))
     
-#-----DISENO DE LOS ENTRY DE LA VENTANA DE LOGIN-----
+#-----DISEÑO DE LOS ENTRY DE LA VENTANA DE LOGIN-----
 
 def bg_user(event):
     texto_actual = user_log.get()
@@ -89,7 +89,7 @@ def bg_corr(event):
         corr_log.insert(0, "Email")
         corr_log.config(foreground='gray63')
 
-#-----DISENO DE LOS ENTRY DE LA VENTANA DE REGISTRO-----
+#-----DISEÑO DE LOS ENTRY DE LA VENTANA DE REGISTRO-----
 
 def bg_user2(event):
     texto_actual = user_sign.get()
@@ -193,13 +193,13 @@ def validate_entry2(a, b):
 
 def validacion_de_registro():
     if user_sign.get()=="Usuario" or contra_sign.get()=="Contraseña" or corr_sign.get()=="Correo electronico" or corr_sign2.get()=="":
-        messagebox.showinfo(title="AVISO", message="Algun campo sigue vacio, intente de nuevo")
+        messagebox.showinfo(message="Algún campo sigue vacío, vuelva a intentar", title="Aviso")
     else:
         sign_user()
 
 def validacion_de_login():
     if user_log.get()=="Usuario" or contra_log.get()=="Contraseña" or corr_log.get()=="Correo electronico" or corr_log2.get()=="":
-        messagebox.showinfo(title="AVISO", message="Algun campo sigue vacio, intente de nuevo")
+        error()
     else:
         log_user()
 
@@ -222,10 +222,10 @@ def sign_user():
         conexion.rollback()
         messagebox.showinfo(
             message="dou! No se pudo realizar el registro", title="AVISO")
+    des1()
     conexion.close()
 
 def log_user():
-
     conexion = sqlite3.connect("inisesion.db")
     fcursor = conexion.cursor()
     corr_log3=(corr_log.get()+corr_log2.get())
@@ -241,7 +241,54 @@ def log_user():
 
     conexion.close()
 
-#****************-------------------FUNCIONES BD PARA LA BASE DE DATOS----------------***************************
+#*****------------------FUNCIONES DE LA BASE DE DATOS PARA LOS ASIENTOS------------------*****************
+
+def validar_noasientos():
+    
+    print()
+
+
+#****************--------------------VENTANA DE ERROR--------------------------------------*********************************
+
+def error ():
+
+    try:
+        ven1.withdraw()
+        ven2.withdraw()
+        ven2.withdraw()
+    except Exception:
+        pass
+
+    global vene
+    vene = Toplevel(ven1)
+    vene.title ("Ups...error")
+    vene.resizable(width=False, height=False)
+    vene.geometry('400x450')
+    centrar(vene, 400, 450)
+    img = Image.open("CONTABILIDAD_PROG_CONTABLE/Mono1.png")
+    new_img = img.resize ((300,256))
+    render = ImageTk.PhotoImage(new_img)
+    img1 = Label(vene, image= render)
+    img1.image = render
+    img1.place(x=45, y=38)
+    miEtiqueta1 = Label(vene, text="Datos incorrectos \n Algun campo sigue vacio, completelo antes de continuar", font=("Times New Roman", 13), fg="gray1")
+    miEtiqueta1.pack()
+
+    #se crean los botones
+    boton = tk.Button(vene,command=des3, text='Ok entiendo', height=2, width=10)
+    boton.place(x=160, y=350)
+
+    vene.protocol("WM_DELETE_WINDOW", des3)
+
+    vene.mainloop()
+
+#****************--------------FUNCIONES PARA LOS ASIENTOS----------------************************
+
+def validar_asientos ():
+    if cuenta_cod.get()=="" or asiento_entry.get()=="" or aboncar_box.get()=="" or importe.get()=="":
+        messagebox.showerror(title="AVISO", message="Algun campo sigue vacio :/ \n rellene el formulario antes de agregar un asiento")
+    else:
+        print("CAMPOS COMPLETADOS")
 
 def validacion_entradas():
     if cuenta_cod.get()=="":
@@ -277,12 +324,28 @@ def cod_eleccion():
     elif cuenta_cod.get()=="50000":
         asiento_entry.config(values=["COSTO DE VENTAS", "GASTO DE VENTAS", "GASTOS DE ADMINISTRACION"])
 
-#funcion para las ventanas xd
-def cierre():
-    ventanaaaa.destroy()
-    boton1.config(state="normal")
+#****************-------------------ESPACIO DEDICADO A LA DESTRUCCION DE VENTANAS----------------***************************
 
-    
+def des1 ():
+    try:
+       ven2.destroy()
+       ven1.deiconify()
+    except Exception:
+        pass
+
+def des2 ():
+    try:
+       ven3.destroy()
+       ven1.deiconify()
+    except Exception:
+        pass
+
+def des3 ():
+    try:
+       vene.destroy()
+       ven1.deiconify()
+    except Exception:
+        pass
 
 #****************------------------VENTANAS DE INICIO DE SESION--------------*****************
 
@@ -301,6 +364,14 @@ def salirAplicacion():
 		jaja.destroy()
 
 def ven_login():
+
+    try:
+        ven3.withdraw()
+        ven2.withdraw()
+    except Exception:
+        pass
+
+
     global ven1
     ven1 = tk.Tk()
     ven1.title("Bienvenido de nuevo, usuario")
@@ -372,7 +443,7 @@ def ven_login():
 
     Label(ven1, text="Bienvenido", foreground="midnight blue", bg="ghost white",
           width="10", height="2", font=("corbel light", 30)).place(x=100, y=50)
-    Label(ven1, text="Inicia sesion antes de entrar", foreground="gray1", bg="ghost white",
+    Label(ven1, text="Inicia sesión antes de entrar", foreground="gray1", bg="ghost white",
           width="20", height="2", font=("corbel light", 10)).place(x=135, y=125)
     
     boton_acept=ttk.Button(ven1, text="Iniciar Sesion", command=validacion_de_login, cursor="hand2")
@@ -382,14 +453,19 @@ def ven_login():
     boton_reg.place(width=150, height=25, x=135, y=390)
 
     ven1.config(menu=menubar)
-    global boton1
-    boton1 = boton_acept
     global jaja
     jaja = ven1
     ven1.mainloop()
 
 def ven_reg():
-    ven1.iconify()
+
+    try:
+        ven1.withdraw()
+        ven3.withdraw()
+    except Exception:
+        pass
+
+
     global ven2
     ven2 = tk.Toplevel(ven1)
     ven2.title("Registro de usuario")
@@ -457,22 +533,37 @@ def ven_reg():
     boton_regis=ttk.Button(ven2, text="Registrarse", command=validacion_de_registro, cursor="hand2")
     boton_regis.place(width=150, height=25, x=135, y=350)
 
-    boton_inv=Button(ven2, text="Entrar como invitado", font=("yu gothic ui", 8, "bold underline"), fg="blue4", command="", cursor="hand2", activebackground="ghost white", bg="ghost white", bd=0)
+    boton_inv=Button(ven2, text="Entrar como invitado", font=("yu gothic ui", 8, "bold underline"), fg="blue4", command=des1, cursor="hand2", activebackground="ghost white", bg="ghost white", bd=0)
     boton_inv.place(width=150, height=25, x=135, y=390)
     
+    ven2.protocol("WM_DELETE_WINDOW", des1)
     ven2.mainloop()
+
+
+#****************--------------VENTANA DE PROMEDIOS------------------*******************
+
+def ven_promedios():
+    ventana = Tk()
+    ventana.configure(bg="beige")
+    ventana.resizable(width=False, height=False)
 
 
 #****************--------------VENTANA DE ASIENTOS DE DIARIO------------------*******************
 
 def ven_asientos():
+
+    try:
+        ven1.withdraw()
+        ven2.withdraw()
+    except Exception:
+        pass
+
     global ven3
     ven3 = Tk()
     ven3.title("Programa contable")
     ven3.geometry("1280x720")
     ven3.resizable(width=False, height=False)
     ven3.config(bg="azure")
-    boton1.config(state="disable")
     w = int(850)
     h = int(450)
     centrar(ven3, w, h)
@@ -498,14 +589,16 @@ def ven_asientos():
     lista_pedidos.column("#3",  width=100)
     lista_pedidos.column("#4",  width=100)
 
+    menubar=Menu(ven3,bg="paleturquoise")
+    menubasedat=Menu(menubar,tearoff=0)
+    menubasedat.add_command(label="Ventana Promedios", command=ven_promedios)
+    menubar.add_cascade(label="PROM", menu=menubasedat)
 
     global cuenta_cod
     global asiento_entry
     global aboncar_box
     global importe
-    def cierre():
-        ven3.destroy()
-        boton1.config(state="normal")
+    global no_asiento
 
     cuenta_valid = StringVar()
     import_valid = StringVar()
@@ -529,24 +622,20 @@ def ven_asientos():
     boton_acept=ttk.Button(ven3, text="Agregar",cursor="hand2", command=validacion_entradas)  # command pendiente
     boton_acept.place(x=150, y=30,height=30)
 
-    boton_reg=ttk.Button(ven3, text="Regresar", cursor="hand2", command=cierre)  # command pendiente
+    boton_reg=ttk.Button(ven3, text="Regresar", cursor="hand2", command=des2)  # command pendiente
     boton_reg.place(x=10, y=400, width=220)
 
-    boton_añadir=ttk.Button(ven3, text="Añadir", cursor="hand2")  # command pendiente
+    boton_añadir=ttk.Button(ven3, text="Añadir", cursor="hand2", command=validar_asientos)  # command pendiente
     boton_añadir.place(x=67, y=260,height=30,width=120)
 
     boton_sig_as=ttk.Button(ven3, text="Siguiente asiento", cursor="hand2")  # command pendiente
     boton_sig_as.place(x=67, y=300, height=30,width=120)
 
-    mi_label3 = Label(ven3,
-                        text="No. de asiento",
-                        bg="azure") 
+    mi_label3 = Label(ven3, text="No. de asiento", bg="azure") 
     mi_label3.place(x=50, y=360,width=80,height=30)
-    ven3.protocol("WM_DELETE_WINDOW", cierre)
 
-    global ventanaaaa
-    ventanaaaa = ven3
+    ven3.protocol("WM_DELETE_WINDOW", des2)
+    ven3.config(menu=menubar)
     ven3.mainloop()
-
 
 ven_login()

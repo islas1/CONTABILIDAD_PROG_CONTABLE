@@ -2,38 +2,20 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 from tkinter import messagebox
-import pymysql
 from PIL import Image, ImageTk
 import sqlite3
+from tkinter import ttk
+import time
+from time import sleep
 
 # --------BASE DE DATOS Y FUNCIONES DE ESTA---------
 
-conexion = sqlite3.connect("inisesion.db")
+conexion = sqlite3.connect("conta.db")
 conexion.execute(
     "CREATE TABLE IF NOT EXISTS login (id INT AUTO_INCREMENT PRIMARY KEY, user VARCHAR(255), contra VARCHAR(225), corr VARCHAR (255))")
 
-
-db = pymysql.connect(
-    host="localhost",
-    user="root",
-    password=""
-)
-
-cursor = db.cursor()
-
-try:
-    cursor.execute("CREATE DATABASE contable;")
-    print("BASE DE DATOS CREADA CON EXITO")
-except:
-    print("LA BASE DE DATOS NO SE CREO O YA EXISTE")
-
 def create_tables():
-    db = pymysql.connect(
-      host="localhost",
-      user="root",
-      password="",
-      db="contable"
-    )
+    db = sqlite3.connect("conta.db")
 
     cursor = db.cursor()
 
@@ -282,17 +264,67 @@ def error ():
 
     vene.mainloop()
 
+def error2 ():
+
+    try:
+        ven3.withdraw()
+    except Exception:
+        pass
+
+    global vene2
+    vene2 = Toplevel(ven1)
+    vene2.title ("Ups...error")
+    vene2.resizable(width=False, height=False)
+    vene2.geometry('400x450')
+    centrar(vene2, 400, 450)
+    img = Image.open("CONTABILIDAD_PROG_CONTABLE/Mono1.png")
+    new_img = img.resize ((300,256))
+    render = ImageTk.PhotoImage(new_img)
+    img1 = Label(vene2, image= render)
+    img1.image = render
+    img1.place(x=45, y=38)
+    miEtiqueta1 = Label(vene2, text="Datos incorrectos \n Algun campo sigue vacio, completelo antes de continuar", font=("Times New Roman", 13), fg="gray1")
+    miEtiqueta1.pack()
+
+    #se crean los botones
+    boton = tk.Button(vene2,command=des4, text='Ok entiendo', height=2, width=10)
+    boton.place(x=160, y=350)
+
+    vene2.protocol("WM_DELETE_WINDOW", des4)
+
+    vene2.mainloop()
+
+#****************--------------------VENTANA DE ERROR 2--------------------------------------*********************************
+
+#agregar los datos
+
 #****************--------------FUNCIONES PARA LOS ASIENTOS----------------************************
 
 def validar_asientos ():
     if cuenta_cod.get()=="" or asiento_entry.get()=="" or aboncar_box.get()=="" or importe.get()=="":
-        messagebox.showerror(title="AVISO", message="Algun campo sigue vacio :/ \n rellene el formulario antes de agregar un asiento")
+        error2()
     else:
-        print("CAMPOS COMPLETADOS")
+        # Obtener los datos del nuevo alumno
+        nombre = entrada_nombre.get()  
+        edad = entrada_edad.get()
+        email = entrada_email.get()
+
+        # Validar que los campos no estén vacíos
+        if not nombre or not edad or not email:
+            messagebox.showerror("Error al agregar el alumno", "Por favor ingrese todos los datos del alumno")
+            return
+
+        # Agregar los datos
+        agregar_datosDB(valores)
+
+        # Limpiar los campos de entrada
+        entrada_nombre.delete(0, END)
+        entrada_edad.delete(0, END)
+        entrada_email.delete(0, END)
 
 def validacion_entradas():
     if cuenta_cod.get()=="":
-        messagebox.showinfo(title="AVISO", message="El campo esta vacio ingresa un valor")
+        error2()
     else:
         cod_eleccion()
 
@@ -347,6 +379,13 @@ def des3 ():
     except Exception:
         pass
 
+def des4 ():
+    try:
+       vene2.withdraw()
+       ven3.deiconify()
+    except Exception:
+        pass
+
 #****************------------------VENTANAS DE INICIO DE SESION--------------*****************
 
 def mensaje():
@@ -373,7 +412,7 @@ def ven_login():
 
 
     global ven1
-    ven1 = tk.Tk()
+    ven1 = tk.Toplevel(main_window)
     ven1.title("Bienvenido de nuevo, usuario")
     ven1.geometry("800x500")
     ven1.resizable(width=False, height=False)
@@ -544,7 +583,7 @@ def ven_reg():
 
 def ven_promedios():
     ventana = Tk()
-    ventana.configure(bg="beige")
+    ventana.configure(bg="azure")
     ventana.resizable(width=False, height=False)
 
 
@@ -555,6 +594,7 @@ def ven_asientos():
     try:
         ven1.withdraw()
         ven2.withdraw()
+        vene2.withdraw
     except Exception:
         pass
 
@@ -603,7 +643,7 @@ def ven_asientos():
     cuenta_valid = StringVar()
     import_valid = StringVar()
 
-    cuenta_cod=Entry(ven3, validate="key", validatecommand=(ven3.register(validate_entry), "%S", "%P"), background="ghostwhite", justify="left", textvariable=cuenta_valid, foreground="black", font=("calibri light", 12))   #8
+    cuenta_cod=Entry(ven3, validate="key", validatecommand=(ven3.register(validate_entry), "%S", "%P"), background="ghostwhite", justify="left", textvariable=cuenta_valid, foreground="black", font=("calibri light", 12))   #codigo
     cuenta_cod.place(x=10, y=30,width=130, height=30)
 
     asiento_entry=ttk.Combobox(ven3, font=("calibri light", 9), state="readonly", values=[])
@@ -619,16 +659,16 @@ def ven_asientos():
     no_asiento=Entry(ven3, state="readonly", background="ghostwhite", justify="left", foreground="black", font=("calibri light", 12))   #numeros del siguiente asiento
     no_asiento.place(x=10, y=360, width=30, height=30)
 
-    boton_acept=ttk.Button(ven3, text="Agregar",cursor="hand2", command=validacion_entradas)  # command pendiente
+    boton_acept=ttk.Button(ven3, text="Agregar",cursor="hand2", command=validacion_entradas)  
     boton_acept.place(x=150, y=30,height=30)
 
-    boton_reg=ttk.Button(ven3, text="Regresar", cursor="hand2", command=des2)  # command pendiente
+    boton_reg=ttk.Button(ven3, text="Regresar", cursor="hand2", command=des2)  
     boton_reg.place(x=10, y=400, width=220)
 
-    boton_añadir=ttk.Button(ven3, text="Añadir", cursor="hand2", command=validar_asientos)  # command pendiente
+    boton_añadir=ttk.Button(ven3, text="Añadir", cursor="hand2", command=validar_asientos) 
     boton_añadir.place(x=67, y=260,height=30,width=120)
 
-    boton_sig_as=ttk.Button(ven3, text="Siguiente asiento", cursor="hand2")  # command pendiente
+    boton_sig_as=ttk.Button(ven3, text="Siguiente asiento", cursor="hand2")  
     boton_sig_as.place(x=67, y=300, height=30,width=120)
 
     mi_label3 = Label(ven3, text="No. de asiento", bg="azure") 
@@ -638,4 +678,29 @@ def ven_asientos():
     ven3.config(menu=menubar)
     ven3.mainloop()
 
-ven_login()
+#****************-------------Temporizador------------------*******************
+
+def tempo():
+   progressbar.start(30)
+   time.sleep(6)
+   ven_login()
+
+#****************--------------VENTANA PROGRESS BAR--------------******************
+
+def prog():
+    global progressbar
+    global main_window
+    main_window = tk.Tk()
+    main_window.config(bg="azure")
+    main_window.title("Barra de progreso en Tk")
+    progressbar = ttk.Progressbar()
+    progressbar = ttk.Progressbar(maximum=200)
+    pas = tk.Button(main_window, text="       tempo      ", command=tempo)
+    pas.pack(padx=20, pady=20)
+    progressbar.place(x=30, y=60, width=200)
+    main_window.geometry("300x200")
+    main_window.mainloop()
+
+
+
+prog()
